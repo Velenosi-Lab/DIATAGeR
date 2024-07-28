@@ -1,0 +1,25 @@
+Package: DIATAGeR
+Type: Package
+Title: Lipid identification by data-independent mass spectrometry
+Version: 1.0.0
+Author: Thomas J. Velenosi
+Maintainer: The package maintainer <thomas.velenosi@ubc.ca>
+Description: This package can be used to identify triacylglycerols
+  acquired by data-independent acquisition based LCMS.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+  data.table,
+  tidyverse (>= 1.3.0),
+	parallel,
+	methods,
+	caret,
+	pROC,
+	ggrepel,
+	fuzzyjoin,
+	gtools
+VignetteBuilder: knitr
+Suggests: knitr,rmarkdown
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
