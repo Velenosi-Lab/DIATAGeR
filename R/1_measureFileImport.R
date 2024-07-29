@@ -92,7 +92,7 @@ measureFileImport <-
       
       # load adducts; Add_DF returns: character (empty)
       #Add_DF <- list.files("inst/adducts", full.names = T, recursive = T)
-      Add_DF <- list.files(system.file("adducts", package="DIALipidID"), full.names = T)
+      Add_DF <- list.files(system.file("adducts", package="DIATAGeR"), full.names = T)
       
       Add_DF <- read_csv(Add_DF[grep(IonMode, Add_DF)], col_types = cols())
       Add_sub <- measureFileSub1 %>%
