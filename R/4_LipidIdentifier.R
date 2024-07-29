@@ -123,7 +123,7 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
   # LipidPrecurs <- read_csv(paste0("inst/extdata/",lipid,"_",ion.mode,"_Core.csv")) 
   LipidPrecurs <- getTAGs(tails = max.tails)
   #LipidIDFormat <- read_csv('inst/extdata/LipidIDFormat.csv')
-  LipidIDFormat <- list.files(system.file("extdata", package="DIALipidID"), full.names = T)
+  LipidIDFormat <- list.files(system.file("extdata", package="DIATAGeR"), full.names = T)
   LipidIDFormat <- read_csv(LipidIDFormat[grep("LipidIDFormat", LipidIDFormat)])
   
   NumberOfPrecursors <- as.numeric(LipidIDFormat[grep(paste0("^",lipid,"_",ion.mode),LipidIDFormat$LipidID),2])
