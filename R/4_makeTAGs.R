@@ -47,6 +47,8 @@ doNothing <- function(x) x
 #' @param tails list of desired number of carbons and the maximum number of double 
 #' bonds for each fatty acyl chain length. Format: number of carbons. number of
 #' double bonds (Eg: tails = 8.2 creates three fatty acyl chains: 8:0, 8:1 and 8:2)
+#' @param exact_tails library can be customizable for specific tails 
+#' (Eg: exact_tails = c("18.1","18.2) creates library of TGs made up 18:1 and 18:2 fatty acids)
 #'
 #' @return library of triacylglycerols with information of precursors and fragments masses
 #' @export
