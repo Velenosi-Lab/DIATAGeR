@@ -1,6 +1,10 @@
 
 
-getFAs <- function(Max) {
+getFAs <- function(Max,exact_tails=NULL) {
+  if (!is.null(exact_tails)) {
+    return(exact_tails)
+  }
+  
   FAs <- c()
   for (i in 1:length(Max)){
     FAs <- c(FAs, seq(floor(Max[i]), Max[i], by = 0.1))
@@ -54,7 +58,7 @@ doNothing <- function(x) x
 #' }
 #' 
 
-getTAGs <- function(tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"){
+getTAGs <- function(tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",exact_tails=NULL){
   
   if (grepl(",", tails)) { 
     Max = read.delim(sep = ",", header = F, text = tails) %>% t()
@@ -62,11 +66,12 @@ getTAGs <- function(tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 
     Max <- read.delim(sep = " ", header = F, text = tails) %>% t()
   }  
 
-  FAs <- getFAs(Max)
+  FAs <- getFAs(Max,exact_tails)
   
   Tails <- combinations(length(FAs), 3, FAs, repeats.allowed = T)
-  Tails <- apply(Tails, 2, function(x) sprintf('%.1f', x) )
-  
+  if (is.null(exact_tails)) {
+    Tails <- apply(Tails, 2, function(x) sprintf('%.1f', x) )
+  }  
   Formula <- as.data.frame(t(Tails))
   Formula <- lapply(Formula, doNothing)
   Formula <- lapply(Formula, str_split, "\\.")

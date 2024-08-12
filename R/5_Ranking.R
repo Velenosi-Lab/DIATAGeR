@@ -372,7 +372,7 @@ getTails <-  function(Lipids){
 ##### Retrieve spectra from every sample #####
 retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf","msp"), ppmtol, rttolMS1=12){
   parse_msp <- function(file_path) {
-    
+    gc()
     msp <- scan(file = file_path, what = "",
                 sep = "\n", quote = "",
                 allowEscapes = FALSE,
@@ -390,7 +390,7 @@ retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf
     
     #msms
     start_indices <- indices + 5
-    end_indices <- c(tail(indices, -1) - 5, length(data))
+    end_indices <- c(tail(indices, -1) - 5, length(msp))
     fragments_temp <- sapply(seq_along(start_indices), function(i) {
       paste(msp[start_indices[i]:end_indices[i]], collapse = " ")
     })
@@ -401,6 +401,7 @@ retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf
     return(spectra_file)
   }
   parse_mgf <- function(file_path) {
+    gc()
     
     mgf <- readLines(file_path,warn=FALSE)
     # general indices
