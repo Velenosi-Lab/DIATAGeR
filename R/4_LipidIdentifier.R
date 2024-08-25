@@ -25,6 +25,7 @@
 #' bonds for each fatty acyl chain length. 
 #' Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
 #' 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
+#' @param exact.tails library can be customizable for specific tails  
 #'
 #' @return  A folder named "Pos" or "Neg" (depends on the ion mode) will be created and contain a list of identified triacylglycerols 
 #' @export
@@ -42,6 +43,7 @@
 #' ms1.precursors= 1, ms2.precursors = 1,
 #' max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
 #' 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
+#' exact.tails=NULL,
 #' which.frag = "any", 
 #' print.spectra = F,
 #' write.annotations = T)
@@ -54,7 +56,8 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
                             which.frag = "any", ms1.precursors= c(1),
                             ms2.precursors = c(0,1), version,
                             max.tails= "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
-                          print.spectra = FALSE, write.annotations=TRUE){
+                            exact.tails = NULL,
+                            print.spectra = FALSE, write.annotations=TRUE){
 
   ## Calculates mz difference from PPM for MS1
   ppmMS1 <- function(mz, mode, ppmtolMS1){
@@ -121,7 +124,7 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
 
   #Import lipid precursor spreadsheet
   # LipidPrecurs <- read_csv(paste0("inst/extdata/",lipid,"_",ion.mode,"_Core.csv")) 
-  LipidPrecurs <- getTAGs(tails = max.tails)
+  LipidPrecurs <- getTAGs(tails = max.tails,exact_tails=exact.tails)
   #LipidIDFormat <- read_csv('inst/extdata/LipidIDFormat.csv')
   LipidIDFormat <- list.files(system.file("extdata", package="DIATAGeR"), full.names = T)
   LipidIDFormat <- read_csv(LipidIDFormat[grep("LipidIDFormat", LipidIDFormat)])

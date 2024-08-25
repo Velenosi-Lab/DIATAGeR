@@ -10,6 +10,7 @@
 #' @param max.tails list of desired number of carbons and the maximum number of double 
 #' bonds for each fatty acyl chain length. 
 #' @param ion.mode Pos or Neg to indicate positive or negative ion mode
+#' @param exact.tails library can be customizable for specific tails 
 #'
 #' @return a library of decoy triacylglycerols
 #' @export
@@ -22,7 +23,7 @@
 #'   Identified = Lipids)
 #'   }
 
-allDecoys <- function(Identified, version, max.tails, ion.mode="Pos"){
+allDecoys <- function(Identified, version, max.tails, exact.tails, ion.mode="Pos"){
   
   ## Load references for class
   Identified <- Identified[Identified$FeatureType=="Lipid",]
@@ -35,7 +36,7 @@ allDecoys <- function(Identified, version, max.tails, ion.mode="Pos"){
   }
 
   # references <- read_csv(paste0("inst/extdata/",lipid_class,"_", ion.mode, "_Core.csv")) 
-  references <- getTAGs(tails = max.tails)
+  references <- getTAGs(tails = max.tails,exact_tails = exact.tails)
   #Get index of short.name reference list
   reference_short_name <- grep("[sS]hort.*", colnames(references))
   

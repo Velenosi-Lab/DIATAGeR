@@ -19,18 +19,16 @@ knitr::opts_chunk$set(
 
 
 # Introduction
-
-Triacylglycerols (TGs) are the main component of dietary fat consumption and elevated levels are implicated in dyslipidemia, which contributes to metabolic syndrome. Profiling triacylglycerols (TGs) in biological samples can provide novel insights into metabolic syndrome disease pathology. However, since TGs are comprised of three fatty acyls with various carbon length and double bond combinations, there are potentially thousands of possible molecular species, which are challenging to annotate. This document describes the usage of `DIATAGeR` package to identify TGs acquired by data-independent acquisition (DIA) based liquid chromatography mass spectrometry. 
-
+Triacylglycerols (TGs) are the most abundant lipids in the human body and the primary source of energy storage. Altered TGs are implicated in metabolic syndrome and detailed structural information may provide novel insights into diseases pathology. TG are comprised of 3 fatty acyls with various lengths and double bond composition, complicating structural annotation. DIA-based lipidomics enables a continuous and unbiased acquisition of all TGs, creating the potential for more comprehensive TG analysis. However, DIA generates multiplexed MS2 spectra that pose challenges to identifying TGs. Here, we present DIATAGeR, an R package aimed to automate and improve TG identification to the molecular species level in DIA-based lipidomics.
 
 ## DIATAGeR Workflow
 
-![DIATAGeR Workflow](DIATAGeR_Workflow.jpg){width=100%}
+![DIATAGeR Workflow](Fig 1_JPEG.jpg){width=100%}
 \break
 
 # Required Data 
 
-DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list can be MS-DIAL alignment file or generic format <link of feature list example>. MS2 spectra can be in TXT (peak list exported from MSDIAL), MSP and MGF format. 
+DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list can be MS-DIAL alignment file or generic format [[feature list example]](https://shorturl.at/COesX). MS2 spectra can be in txt (peak list exported from MSDIAL), msp and mgf format. 
 
 # Installation
 
@@ -58,11 +56,11 @@ setwd("Working directory folder")
 
 ## Lipid identification
 
-Six R scripts are used in this package: measureFileImport, SpectraImport, KeepIsotopes, LipidIdentifier, ScoreLipids and FDRCutoff. For further details, please use `help('name of the function, package = "DIATAGeR")`
+DIATAGeR includes 6 functions: measureFileImport, SpectraImport, RemoveIsotopes, LipidIdentifier, ScoreLipids and FDRCutoff. For further details, please use `help('name of the function, package = "DIATAGeR")`
 
 ### Step 1: measureFileImport Function: Feature list Import
 
-measureFileImport reads in feature list (MSDIAL Alignment file or Generic Format). Example of generic format <insert link> 
+measureFileImport reads in feature list (MSDIAL Alignment file or Generic Format).
 
 #### Example:
 ```{r}
@@ -90,7 +88,7 @@ ion.mode <- c("Pos","Neg")
 results.file.type = c("MSDIAL", "Generic")
 spectra.file.type =c("txt","msp","mgf")
 rttol #retention time tolerance in seconds. Default to 2
-ppmtol # ppm tolerance. Default to 5. This parameter is for for generic format
+ppmtol # ppm tolerance. Default to 5. This parameter is for generic feature list
 
 
 # Example
@@ -116,16 +114,11 @@ DIADataObj = DIA_Pos # the object stores feature list
 ppmtol #ppm tolerance
 low.intensity.cutoff # Anything peaks with intensity below this value will be 
 # removed. Default 100.
-density.cutoff = c(TRUE,FALSE) #If TRUE, a density-based cutoff will be applied. The kernel
-# density estimate of each spectra's intensity distribution will be used to implement
-# a low intensity cutoff. 
-density.cutoff.value # The low intensity cutoff is the intensity where the
-# percentage change in the the Riemann sum of the kernel density when the intensity
-# is increased by 10 drops below the density.cutoff.value. Higher value for a lower intensity 
-# cutoff. Default 1. Change with caution. 
+density.cutoff = c(TRUE,FALSE) #If TRUE, a density-based cutoff will be applied.
+density.cutoff.value # Default 1. Change with caution. 
 
 #Example
-DIA_Pos <- KeepIsotopes(DIADataObj = DIA_Pos, 
+DIA_Pos <- RemoveIsotopes(DIADataObj = DIA_Pos, 
                         ppmtol = 15, 
                         low.intensity.cutoff=100, 
                         density.cutoff=T, 
@@ -142,21 +135,17 @@ ion.mode = c("Pos","Neg")
 format = c("MSDIAL","Generic")
 ppmtol #ppm tolerance. Default to 15
 rttol #retention time tolerance in seconds. Default to 5
-intensity.window #Two numerical values, specifying the percentage multiplication
-# factor for the precursor intensity that the fragments must fall within. 
-# Defaults to 0 and infinity. 
-version # Character vector to specify the version of generated result file.
-# Appends this character to the output file name. 
+intensity.window # Defaults to 0 and infinity. 
+version # To specify the version of generated result file.
 ms1.precursors #Number of precursors found in MS1 to identify compounds. Default to 1 
-ms2.precursors #Number of precursor found in MS2 to identify compounds. 
+ms2.precursors #Number of precursors found in MS2 to identify compounds. 
 which.frag = c("any","firsttwo") #specifying whether any fragment 
-# should be used or if the first two fragments should be used for identification. 
-# Useful when there are three possible fragments in the reference and only two are 
-# required for a positive match. Default 'any'.
+# should be used or if the first two fragments should be used for identification. Default 'any'.
 max.tails # list of desired number of carbons and the maximum number of double 
-#' bonds for each fatty acyl chain length. 
+#' bonds for each fatty acyls. 
 #' Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
 #' 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
+exact.tails # library can be customizable for specific tails. Default NULL
 print.spectra = c(TRUE,FALSE) # If TRUE, prints MS/MS spectra and mirrored 
 # reference peaks. Default FALSE. 
 write.annotations = c(TRUE, FALSE) # If TRUE, the function automatically writes 
@@ -172,8 +161,8 @@ LipidIdentifier(DIADataObj = DIA_Pos,
                 intensity.window = c(0,Inf),
                 version = "September2024", 
                 ms1.precursors= 1, ms2.precursors = 1,
-                max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3,
-                18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
+                max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
+                exact.tails = NULL,
                 which.frag = "any", 
                 print.spectra = F,
                 write.annotations = T)
@@ -183,40 +172,38 @@ A folder named according to ion.mode (Pos/Neg) will be created in the working di
 
 ### Step 5: ScoreLipids function: TG scoring 
 
-A separate TG identification is performed with the decoy database, then the targeted and decoy annotations were merged.
-This function will create a decoy database which contains decoy TGs. The combined TG annotations were scored using the machine learning algorithm. 
+A separate TG identification is performed with the decoy database, then the targeted and decoy annotations are merged and  scored using the machine learning algorithm. 
 
 ```{r}
 # Set the processing parameters
 DIADataObj = DIA_Pos #The object stores alignment file and spectra
-format # tell the function if the alignment file is MSDIAL or Generic Format
-ion.mode #Mass spectrometry ion mode, the same as in LipidIdentifier. 
-lipid #Lipid class, the same as in LipidIdentifier. 
-version #Version name, the same as in LipidIdentifier. Also used to pull identified lipids from the ion.mode folder. 
-ppmtol #PPM tolerance, the same as in LipidIdentifier. Default 15. 
-rttol #Retention time tolerance, the same as in LipidIdentifier. Default 5. 
+format # Same as LipidIdentifier 
+ion.mode # Same as LipidIdentifier 
+lipid # Same as LipidIdentifier 
+version # Same as LipidIdentifier 
+ppmtol # Same as LipidIdentifier 
+rttol # Same as LipidIdentifier 
+ms1.precursor # Same as LipidIdentifier 
+ms2.precursors # Same as LipidIdentifier 
+max.tails # Same as LipidIdentifier 
+exact.tails # Same as LipidIdentifier 
 spectra.file #File path for retrieving spectra from all samples. 
-ppmtolMS1 #Defaults to ppmtol if not specified. 
-ms1.precursors #Number of precursors found in MS1 to identify compounds. Default to 1 
-ms2.precursors #Number of precursor found in MS2 to identify compounds. 
-spectra.file.type #specify txt, msp or mgf files. The user will have determined the spectra name
-max.tails #list of desired number of carbons and the maximum number of double 
-#' bonds for each fatty acyl chain length. 
-#' Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5
+spectra.file.type ("txt","msp","mgf")
 
 #Example: 
 
 ResultsTG<- ScoreLipids(DIADataObj = DIA_Pos,
-                          lipid = "TAG", 
-                          ion.mode = "Pos",
-                          version = "September2024", 
-                          ppmtol= 15, 
-                          rttol = 5, 
-                          ms1.precursors =1, ms2.precursors =1, 
-                          spectra.file.type ="txt",
-                          max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
-                          18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
-                          spectra.file = "Data/Centroid/")
+                        format = "MSDIAL",
+                        lipid = "TAG", 
+                        ion.mode = "Pos",
+                        version = "September2024", 
+                        ppmtol= 15, 
+                        rttol = 5, 
+                        ms1.precursors =1, ms2.precursors =1, 
+                        spectra.file.type ="txt",
+                        max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
+                        exact.tails=NULL,
+                        spectra.file = "Data/Centroid/")
 
 saveRDS(ResultsTG, file = "ResultsTG.RDS")
 

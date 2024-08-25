@@ -4,7 +4,7 @@
 \alias{allDecoys}
 \title{Create decoy database}
 \usage{
-allDecoys(Identified, version, max.tails, ion.mode = "Pos")
+allDecoys(Identified, version, max.tails, exact.tails, ion.mode = "Pos")
 }
 \arguments{
 \item{Identified}{Identified lipids file}
@@ -13,6 +13,8 @@ allDecoys(Identified, version, max.tails, ion.mode = "Pos")
 
 \item{max.tails}{list of desired number of carbons and the maximum number of double
 bonds for each fatty acyl chain length.}
+
+\item{exact.tails}{library can be customizable for specific tails}
 
 \item{ion.mode}{Pos or Neg to indicate positive or negative ion mode}
 }

@@ -176,6 +176,7 @@ getScore <- function(TAGsAll){
 #' Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 
 #' 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
 #' @param ... Additional parameters
+#' @param exact.tails  library can be customizable for specific tails
 #'
 #' @return scores for targeted and decoy triacylglycerols
 #' @export
@@ -205,6 +206,7 @@ ScoreLipids <-  function(DIADataObj,
                          ms1.precursors= c(1), ms2.precursors = c(0,1),
                          spectra.file.type=c("txt","msp","mgf"),
                          max.tails= "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
+                         exact.tails = NULL,
                          spectra.file, ...){
   
   if (missing(spectra.file)){
@@ -223,7 +225,7 @@ ScoreLipids <-  function(DIADataObj,
     
   Identified <- readRDS(list.files(ion.mode, full.names = T)[files])
   
-  allDecoys(version = version, ion.mode = ion.mode, max.tails = max.tails, Identified = Identified)
+  allDecoys(version = version, ion.mode = ion.mode, max.tails = max.tails, exact.tails = exact.tails, Identified = Identified)
   
   DecoyIdentifier(DIADataObj, lipid = lipid, ion.mode = ion.mode, format = format, ppmtol = ppmtol,
                   ppmtolMS1 = ppmtolMS1 , rttol = rttol,
