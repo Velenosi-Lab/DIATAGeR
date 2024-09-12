@@ -1,6 +1,6 @@
 ---
-title: "DIATAGeR: Triacylglycerol annotation of data-independent acquisition based lipidomics data"
-author: "Thomas J. Velenosi"
+title: "DIATAGeR: Triacylglycerol Annotation of Data-Independent Acquisition based Lipidomics"
+author: "Victor C.L. Lee, Khanh C.K. Nguyen, Linglan Zhu, Chloe A.K. White, Tao Huan, Thomas J. Velenosi"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -19,11 +19,11 @@ knitr::opts_chunk$set(
 
 
 # Introduction
-Triacylglycerols (TGs) are the most abundant lipids in the human body and the primary source of energy storage. Altered TGs are implicated in metabolic syndrome and detailed structural information may provide novel insights into diseases pathology. TG are comprised of 3 fatty acyls with various lengths and double bond composition, complicating structural annotation. DIA-based lipidomics enables a continuous and unbiased acquisition of all TGs, creating the potential for more comprehensive TG analysis. However, DIA generates multiplexed MS2 spectra that pose challenges to identifying TGs. Here, we present DIATAGeR, an R package aimed to automate and improve TG identification to the molecular species level in DIA-based lipidomics.
+Triacylglycerols (TGs) are the most abundant lipids in the human body and the primary source of energy storage. Altered TGs are implicated in metabolic syndrome and detailed structural information may provide novel insights into diseases pathology. TGs are comprised of three fatty acyls with various lengths and double bond composition, complicating structural annotation. DIA-based lipidomics enables a continuous and unbiased acquisition of all TGs, creating the potential for more comprehensive TG analysis. However, DIA generates multiplexed tandem mass spectra (MS2) that pose challenges to identifying TGs. Here, we present DIATAGeR, an R package aimed to automate and improve TG identification to the molecular species level in DIA-based lipidomics. 
 
 ## DIATAGeR Workflow
 
-![DIATAGeR Workflow](Fig 1_JPEG.jpg){width=100%}
+![DIATAGeR Workflow](Fig 1_JPEG.jpeg){width=100%}
 \break
 
 # Required Data 
