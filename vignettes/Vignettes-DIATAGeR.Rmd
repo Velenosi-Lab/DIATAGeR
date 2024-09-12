@@ -4,7 +4,7 @@ author: "Victor C.L. Lee, Khanh C.K. Nguyen, Linglan Zhu, Chloe A.K. White, Tao 
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{DIATAGeR: Triacylglycerol annotation of data-independent acquisition based lipidomics data}
+  %\VignetteIndexEntry{DIATAGeR: Triacylglycerol Annotation of Data-Independent Acquisition based Lipidomics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
