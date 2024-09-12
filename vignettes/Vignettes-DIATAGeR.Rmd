@@ -47,16 +47,13 @@ devtools::install_github("Velenosi-Lab/DIATAGeR",
 # load DIATAGeR library
 library(DIATAGeR)
 
-# Example data files can be downloaded from:
-# <insert the google drive link>
-
 # Set the working directory
 setwd("Working directory folder")
 ```
 
 ## Lipid identification
 
-DIATAGeR includes 6 functions: measureFileImport, SpectraImport, RemoveIsotopes, LipidIdentifier, ScoreLipids and FDRCutoff. For further details, please use `help('name of the function, package = "DIATAGeR")`
+DIATAGeR includes 6 functions: measureFileImport, SpectraImport, RemoveIsotopes, LipidIdentifier, ScoreLipids and FDRCutoff. For further details, please use `help('name of the function', package = "DIATAGeR")`
 
 ### Step 1: measureFileImport Function: Feature list Import
 
@@ -168,7 +165,7 @@ LipidIdentifier(DIADataObj = DIA_Pos,
                 write.annotations = T)
 ```
 
-A folder named according to ion.mode (Pos/Neg) will be created in the working directory and contain the result file (Eg: Identified_TAG_Pos_September2024_1). This file contains TGs identified from target database.
+A folder named according to ion.mode (Pos/Neg) will be created in the working directory and contain the result file (Eg: Identified_TAG_Pos_September2024_1). This file will contain TGs identified from target database.
 
 ### Step 5: ScoreLipids function: TG scoring 
 
@@ -188,7 +185,7 @@ ms2.precursors # Same as LipidIdentifier
 max.tails # Same as LipidIdentifier 
 exact.tails # Same as LipidIdentifier 
 spectra.file #File path for retrieving spectra from all samples. 
-spectra.file.type ("txt","msp","mgf")
+spectra.file.type = c("txt","msp","mgf")
 
 #Example: 
 
