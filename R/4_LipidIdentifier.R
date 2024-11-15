@@ -1,3 +1,124 @@
+plot_spectra <- function(){
+  
+  Lipid_Identifed$MSMSref[[1]]
+  Merged_Find_all_spectra[j,]$MSMS
+  
+  Complete <-  Merged_Find_all_spectra[j,]$MSMS[[1]]
+  Matched <-  Lipid_Identifed$MSMSref[[1]]
+  Matched <- Matched[grep("Fragment|First",Matched$name),]
+  textMatched <- -Matched$intensity
+  plotMatched <- Matched[!duplicated(Matched$mzref),]
+  
+  xrange <- c(min(Matched$mz)-25, max(Matched$mz)+25)
+  yrange <- max(Complete$intensity[(Complete$mz>xrange[1] & Complete$mz<xrange[2])])*1.05
+  
+  ggtitleName <- paste0("Feature ID: ", Lipid_Identifed$ID, "\n", Lipid_Identifed$Short.name," ",
+                        Lipid_Identifed$Name, "\nReference ID: ", Lipid_Identifed$ID.Number)
+  
+  plotMatched$intensity <- -plotMatched$intensity
+  text_height <-  -yrange/2
+  text_shift <- (xrange[2]-xrange[1])/10
+  
+  label_text <- paste(Matched$name, round(Matched$mzref, 2)) %>% str_replace(., "_mz", "") %>% str_replace(., "_", " ")
+  label_text <- paste0(label_text, "\nIntensity ", Matched$intensity)
+  
+  g <- ggplot() +
+    geom_bar(data=Complete,aes(x=mz, y=intensity, fill="Measured"), width=(resolution(Complete$mz)*110+0.3), stat = "identity") +
+    geom_bar(data=plotMatched,aes(x=mzref, y=intensity, fill="Reference " ), width=(resolution(Complete$mz)*110+0.3), stat = "identity") +
+    geom_text_repel(aes(x = Matched$mzref, y = textMatched, label=label_text),
+                    direction="y", nudge_y = text_height, 
+                    nudge_x = text_shift,
+                    segment.alpha=0.4, size =2.5, segment.size=0.3, hjust = 0) +
+    scale_fill_manual("Fill", values=c("#ff3c2e","#5881e0"))+
+    # xlim(xrange)+
+    xlab("m/z")+
+    ylab("Intensity")+
+    # ylim(c(-yrange, yrange)) +
+    ggtitle(paste0(ggtitleName))+
+    theme(legend.direction = "horizontal", 
+          legend.position = c(0.5, 0.98),
+          legend.background  = element_rect(colour = NA, fill = NA),
+          legend.text = element_text(size=8),
+          legend.title = element_text(size=8),
+          legend.key.size = unit(0.4, "cm"),
+          plot.title = element_text(family = 'Helvetica', color = '#666666', face = 'bold', size = 11), 
+          panel.border = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.45),
+          panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_line( size=.1, color="black" ),
+          panel.grid.major =  element_blank(),
+          plot.margin = unit(c(0.2,0.5,0.5,0.5), "cm"))
+  
+  lipid_name <- str_replace(Lipid_Identifed$Short.name, ":", ".") %>% str_replace(., " ", ".")
+  pdf(file=paste0(graphdir,"/", lipid_name, "_", Lipid_Identifed$ID,"_", Lipid_Identifed$ID.Number,"_", ion.mode,"_",version,".pdf"),
+      width = 7, height = 6)
+  plot(g)
+  dev.off()
+}
+
+
+plot_spectra_limitrange <- function(){
+  
+  Lipid_Identifed$MSMSref[[1]]
+  Merged_Find_all_spectra[j,]$MSMS
+  
+  Complete <-  Merged_Find_all_spectra[j,]$MSMS[[1]]
+  Matched <-  Lipid_Identifed$MSMSref[[1]][-grep("Precursor",Lipid_Identifed$MSMSref[[1]]$name),]
+  textMatched <- -Matched$intensity
+  plotMatched <- Matched[!duplicated(Matched$mzref),]
+  
+  xrange <- c(min(Matched$mz)-25, max(Matched$mz)+25)
+  yrange <- max(Complete$intensity[(Complete$mz>xrange[1] & Complete$mz<xrange[2])])*1.05
+  
+  ggtitleName <- paste0("Feature ID: ", Lipid_Identifed$ID, "\n", Lipid_Identifed$Short.name," ",
+                        Lipid_Identifed$Name, "\nReference ID: ", Lipid_Identifed$ID.Number)
+  
+  plotMatched$intensity <- -plotMatched$intensity
+  text_height <-  -yrange/2
+  text_shift <- (xrange[2]-xrange[1])/10
+  
+  label_text <- paste(Matched$name, round(Matched$mzref, 2)) %>% str_replace(., "_mz", "") %>% str_replace(., "_", " ")
+  label_text <- paste0(label_text, "\nIntensity ", Matched$intensity)
+  
+  g <- ggplot() +
+    geom_bar(data=Complete,aes(x=mz, y=intensity, fill="Measured"), width=(resolution(Complete$mz)*110+0.3), stat = "identity") +
+    geom_bar(data=plotMatched,aes(x=mzref, y=intensity, fill="Reference " ), width=(resolution(Complete$mz)*110+0.3), stat = "identity") +
+    geom_text_repel(aes(x = Matched$mzref, y = textMatched, label=label_text),
+                    direction="y", nudge_y = text_height, 
+                    nudge_x = text_shift,
+                    segment.alpha=0.4, size =2.5, segment.size=0.3, hjust = 0) +
+    scale_fill_manual("Fill", values=c("#ff3c2e","#5881e0"))+
+    xlim(xrange)+
+    xlab("m/z")+
+    ylab("Intensity")+
+    ylim(c(-yrange, yrange)) +
+    ggtitle(paste0(ggtitleName))+
+    theme(legend.direction = "horizontal", 
+          legend.position = c(0.5, 0.98),
+          legend.background  = element_rect(colour = NA, fill = NA),
+          legend.text = element_text(size=8),
+          legend.title = element_text(size=8),
+          legend.key.size = unit(0.4, "cm"),
+          plot.title = element_text(family = 'Helvetica', color = '#666666', face = 'bold', size = 11), 
+          panel.border = element_blank(),
+          axis.line = element_line(colour = "black", size = 0.45),
+          panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_line( size=.1, color="black" ),
+          panel.grid.major =  element_blank(),
+          plot.margin = unit(c(0.2,0.5,0.5,0.5), "cm"))
+  
+  lipid_name <- str_replace(Lipid_Identifed$Short.name, ":", ".") %>% str_replace(., " ", ".")
+  pdf(file=paste0(graphdir,"/", lipid_name, "_", Lipid_Identifed$ID,"_", Lipid_Identifed$ID.Number,"_", ion.mode,"_",version,".pdf"),
+      width = 6, height = 6)
+  plot(g)
+  dev.off()
+}
+
+
 #' TG identification 
 #'
 #' @param DIADataObj The object stores alignment file and spectra
