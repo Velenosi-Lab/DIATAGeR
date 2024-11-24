@@ -7,4 +7,4 @@
 
 Feature list can be in MS-DIAL alignment format or generic format. [Example](https://shorturl.at/OWNpS)
 
-[Instructions on how to use the package](https://velenosi-lab.github.io/Vignettes/Vignettes-DIATAGeR.html)
+[Instructions on how to use the package](https://velenosi-lab.github.io/DIATAGeR/Vignettes-DIATAGeR.html)
