@@ -51,7 +51,7 @@ ResultsFiletype = c("MSDIAL","Generic")
 # Example
 
 DIA_Pos <-measureFileImport(
-  filename = "Height_0_20239151316.txt",
+  filename = "Feature_List_Liver_MSDIAL.txt",
   IonMode = "Pos",
   ResultsFiletype = "MSDIAL")
 ```
@@ -72,7 +72,7 @@ ppmtol # ppm tolerance. Default to 5. This parameter is for generic feature list
 
 # Example
 DIA_Pos <- SpectraImport(DIADataObj = DIA_Pos,
-                         fileORfoldername =  "Data/centroid",
+                         fileORfoldername =  "Data/Spectra_txt_Liver_MSDIAL",
                          ion.mode = "Pos", 
                          spectra.file.type ="txt",
                          results.file.type = "MSDIAL",
@@ -122,7 +122,8 @@ max.tails # list of desired number of carbons and the maximum number of double
 #' bonds for each fatty acyls. 
 #' Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
 #' 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
-exact.tails # library can be customizable for specific tails. Default NULL
+exact.tails # library can be customizable for specific tails. Default NULL.
+Eg: exact_tails = c("18.1","18.2) creates library of TGs made up 18:1 and 18:2 fatty acids)
 print.spectra = c(TRUE,FALSE) # If TRUE, prints MS/MS spectra and mirrored 
 # reference peaks. Default FALSE. 
 write.annotations = c(TRUE, FALSE) # If TRUE, the function automatically writes 
@@ -180,7 +181,7 @@ ResultsTG<- ScoreLipids(DIADataObj = DIA_Pos,
                         spectra.file.type ="txt",
                         max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
                         exact.tails=NULL,
-                        spectra.file = "Data/Centroid/")
+                        spectra.file = "Data/Spectra_txt_Liver_MSDIAL")
 
 saveRDS(ResultsTG, file = "ResultsTG.RDS")
 
@@ -197,13 +198,16 @@ identified.lipids # List of combined TG annotations
 standard.file # list of standard TGs (Optional)
 iteration # #Default 10
 cutoff  # Empirical FDR. Default 0.1
+rttol #rt tolerance between the rt in standard file and in the result. Default 10
 
 #Example: 
+
 
 ResultsTG_FDR <- FDRCutoff(identified.lipids = ResultsTG,
                             standard.file = "Standards.csv",
                             iteration=10,
-                            cutoff = 0.1)
+                            cutoff = 0.1,
+                            rttol=10)
 
 saveRDS(ResultsTG_FDR, file = "ResultsTG_FDR.RDS")
 
