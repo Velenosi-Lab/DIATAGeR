@@ -251,7 +251,9 @@ calcRevDotProduct <- function(Lipids){
     ref_intensity$intensity <- 1
     ref_intensity <- aggregate(ref_intensity["intensity"], by=ref_intensity["mz"], sum)
     
-    samp_intensity <- samp_intensity[order(samp_intensity$mz),][!duplicated(samp_intensity$mz),]
+    # samp_intensity <- samp_intensity[order(samp_intensity$mz),][!duplicated(samp_intensity$mz),]
+    samp_intensity <- samp_intensity[!duplicated(samp_intensity$mz), ]
+    samp_intensity <- samp_intensity[order(samp_intensity$mz),]
     
     if(nrow(samp_intensity)<2){
       ret <- c(ret, NA)
