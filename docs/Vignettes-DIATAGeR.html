@@ -370,7 +370,8 @@ lipidomics.</p>
 <h1>Required Data</h1>
 <p>DIATAGeR requires two data inputs: a feature list and MS2 spectra.
 Feature list can be an MS-DIAL alignment file or generic format <a href="https://shorturl.at/COesX">[feature list example]</a>. MS2 spectra
-can be in txt (peak list exported from MSDIAL), msp and mgf format.</p>
+can be in txt, msp and mgf format (exported from MSDIAL) or mgf format
+(exported from MZMine).</p>
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
@@ -423,7 +424,7 @@ list</h3>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>fileORfoldername <span class="co">#path to the folder that stores centroid MS2 spectra</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>ion.mode <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Pos&quot;</span>,<span class="st">&quot;Neg&quot;</span>)</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>results.file.type <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;MSDIAL&quot;</span>, <span class="st">&quot;Generic&quot;</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>spectra.file.type <span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;txt&quot;</span>,<span class="st">&quot;msp&quot;</span>,<span class="st">&quot;mgf&quot;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>spectra.file.type <span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;txt&quot;</span>,<span class="st">&quot;msp&quot;</span>,<span class="st">&quot;mgf&quot;</span>,<span class="st">&quot;mgf_mzmine&quot;</span>)</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>rttol <span class="co">#retention time tolerance in seconds. Default to 2</span></span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>ppmtol <span class="co"># ppm tolerance. Default to 5. This parameter is for generic feature list</span></span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a></span>
@@ -475,9 +476,9 @@ spectra</h3>
 <span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>ms2.precursors <span class="co">#Number of precursors found in MS2 to identify compounds. </span></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>which.frag <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;any&quot;</span>,<span class="st">&quot;firsttwo&quot;</span>) <span class="co">#specifying whether any fragment should be used or only the first two fragments for identification. Default &#39;any&#39;.</span></span>
 <span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>max.tails <span class="co"># list of desired number of carbons and the maximum number of double </span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&#39; bonds for each fatty acyls. </span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&#39; Default = &quot;8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, </span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&#39; 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0&quot;</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co"># bonds for each fatty acyls. </span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co"># Default = &quot;8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, </span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co"># 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0&quot;</span></span>
 <span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>exact.tails <span class="co"># library can be customizable for specific tails. Default NULL. </span></span>
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#Eg: exact_tails = c(&quot;18.1&quot;,&quot;18.2) creates library of TGs made up by 18:1 and 18:2 fatty acids</span></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>print.spectra <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>,<span class="cn">FALSE</span>) <span class="co"># If TRUE, prints MS/MS spectra and mirrored </span></span>
@@ -523,7 +524,7 @@ machine learning algorithm.</p>
 <span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>max.tails <span class="co"># Same as LipidIdentifier </span></span>
 <span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>exact.tails <span class="co"># Same as LipidIdentifier </span></span>
 <span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>spectra.file <span class="co">#File path for retrieving spectra from all samples. </span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>spectra.file.type <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;txt&quot;</span>,<span class="st">&quot;msp&quot;</span>,<span class="st">&quot;mgf&quot;</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>spectra.file.type <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;txt&quot;</span>,<span class="st">&quot;msp&quot;</span>,<span class="st">&quot;mgf&quot;</span>,<span class="st">&quot;mgf_mzmine&quot;</span>)</span>
 <span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a></span>
 <span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#Example: </span></span>
 <span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a></span>

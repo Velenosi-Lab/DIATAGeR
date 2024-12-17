@@ -106,7 +106,7 @@ measureFileImport <-
         select(Adduct)
       # Features missing adducts are converted to M-H+ or M-H- 
       if (dim(AdductTest)[1] > 0) {
-        warning(c("Missing adduct masses for ", paste(levels(as.factor(AdductTest$Adduct)))))
+        # warning(c("Missing adduct masses for ", paste(levels(as.factor(AdductTest$Adduct)))))
         if (IonMode == "Pos") {
           Add_sub$'Adduct Mass'[is.na(Add_sub$'Adduct Mass')] <- 1.007276
         } else if (IonMode == "Neg") {

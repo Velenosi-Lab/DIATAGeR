@@ -6,7 +6,7 @@
 #' @param results.file.type tell the function if the feature list is MSDIAL alignment file or Generic Format
 #' @param spectra.type Only for centroid data. The user will have determined the spectra type
 #' when exporting from MSDIAL so this is more of a reminder and will ensure proper functions are called.
-#' @param spectra.file.type Specify txt, msp or mgf files. The user will have determined the spectra name
+#' @param spectra.file.type Specify txt, msp or mgf from MSDIAL or mgf_mzmine. The user will have determined the spectra name
 #' when exporting from MSDIAL so this is more of a reminder and will ensure proper functions are called.
 #' @param rttol retention time tolerance in seconds.
 #' @param ppmtol ppm tolerance. Default to 5. This parameter is for for generic format since it retrieve the spectra based on rt and m/z similarity

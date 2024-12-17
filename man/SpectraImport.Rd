@@ -27,7 +27,7 @@ SpectraImport(
 \item{spectra.type}{Only for centroid data. The user will have determined the spectra type
 when exporting from MSDIAL so this is more of a reminder and will ensure proper functions are called.}
 
-\item{spectra.file.type}{Specify txt, msp or mgf files. The user will have determined the spectra name
+\item{spectra.file.type}{Specify txt, msp or mgf from MSDIAL or mgf_mzmine. The user will have determined the spectra name
 when exporting from MSDIAL so this is more of a reminder and will ensure proper functions are called.}
 
 \item{ppmtol}{ppm tolerance. Default to 5. This parameter is for for generic format since it retrieve the spectra based on rt and m/z similarity}

@@ -27,8 +27,7 @@ Triacylglycerols (TGs) are the most abundant lipids in the human body and the pr
 \break
 
 # Required Data 
-
-DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list can be an MS-DIAL alignment file or generic format [[feature list example]](https://shorturl.at/COesX). MS2 spectra can be in txt (peak list exported from MSDIAL), msp and mgf format. 
+DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list can be an MS-DIAL alignment file or generic format [[feature list example]](https://shorturl.at/COesX). MS2 spectra can be in txt, msp and mgf format (exported from MSDIAL) or mgf format (exported from MZMine). 
 
 # Installation
 
@@ -83,7 +82,7 @@ DIADataObj = DIA_Pos # the object stores feature list
 fileORfoldername #path to the folder that stores centroid MS2 spectra
 ion.mode <- c("Pos","Neg")
 results.file.type = c("MSDIAL", "Generic")
-spectra.file.type =c("txt","msp","mgf")
+spectra.file.type =c("txt","msp","mgf","mgf_mzmine")
 rttol #retention time tolerance in seconds. Default to 2
 ppmtol # ppm tolerance. Default to 5. This parameter is for generic feature list
 
@@ -137,9 +136,9 @@ ms1.precursors #Number of precursors found in MS1 to identify compounds. Default
 ms2.precursors #Number of precursors found in MS2 to identify compounds. 
 which.frag = c("any","firsttwo") #specifying whether any fragment should be used or only the first two fragments for identification. Default 'any'.
 max.tails # list of desired number of carbons and the maximum number of double 
-#' bonds for each fatty acyls. 
-#' Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
-#' 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
+# bonds for each fatty acyls. 
+# Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 
+# 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
 exact.tails # library can be customizable for specific tails. Default NULL. 
 #Eg: exact_tails = c("18.1","18.2) creates library of TGs made up by 18:1 and 18:2 fatty acids
 print.spectra = c(TRUE,FALSE) # If TRUE, prints MS/MS spectra and mirrored 
@@ -184,7 +183,7 @@ ms2.precursors # Same as LipidIdentifier
 max.tails # Same as LipidIdentifier 
 exact.tails # Same as LipidIdentifier 
 spectra.file #File path for retrieving spectra from all samples. 
-spectra.file.type = c("txt","msp","mgf")
+spectra.file.type = c("txt","msp","mgf","mgf_mzmine")
 
 #Example: 
 
