@@ -7,20 +7,29 @@
 standardsCheck <- function(TAGsAll, standard.file= "NewData/MSe_Pos_Data/Standards.csv", rt.type=c("truncated", "exact"), rttol=2){
   ret <- c()
   standards <- read.csv(standard.file)
+  standards$rt <-as.numeric(standards$rt)
   Lipids <- TAGsAll[TAGsAll$Name %in% standards$name,]
   Lipids <- Lipids[Lipids$Class=="Tp",]
   
   
   if (rt.type=="truncated") {
-    standards$rt <- format(round(  standards$rt , 1), nsmall = 1)
-    
+    # standards$rt <- format(round(  standards$rt , 1), nsmall = 1)
+    # for (q in 1:nrow(standards)){
+    #   temp <-  Lipids[grep(standards$rt[q], Lipids$rt)[(grep(standards$rt[q], Lipids$rt) %in% which(Lipids$Name %in% standards$name[q]))],]
+    #   if (nrow(temp) > 1) {
+    #     temp <- temp[order(temp$FragIntensity, decreasing = T),][1,]
+    #   }
+    #   ret <- rbind(ret,temp) 
+    # }
     for (q in 1:nrow(standards)){
-      temp <-  Lipids[grep(standards$rt[q], Lipids$rt)[(grep(standards$rt[q], Lipids$rt) %in% which(Lipids$Name %in% standards$name[q]))],]
+      temp <-  Lipids[grep(standards$name[q], Lipids$Name),]
+      temp <- temp[(temp$rt > standards$rt[q]-rttol/60 & temp$rt < standards$rt[q]+rttol/60),]
       if (nrow(temp) > 1) {
         temp <- temp[order(temp$FragIntensity, decreasing = T),][1,]
       }
-      ret <- rbind(ret,temp) 
+      ret <- rbind(ret,temp)
     }
+    
   }
   
   if (rt.type=="exact") {

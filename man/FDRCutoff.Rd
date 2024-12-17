@@ -4,16 +4,24 @@
 \alias{FDRCutoff}
 \title{Generating a list of TGs passed through a pre-determined FDR}
 \usage{
-FDRCutoff(identified.lipids, standard.file = NULL, iteration = 3, cutoff = 0.1)
+FDRCutoff(
+  identified.lipids,
+  standard.file = NULL,
+  iteration = 3,
+  cutoff = 0.1,
+  rttol = 10
+)
 }
 \arguments{
 \item{identified.lipids}{List of combined TG annotations}
 
 \item{standard.file}{list of standard TGs (Optional)}
 
-\item{iteration}{#Default 10}
+\item{iteration}{Default 10}
 
 \item{cutoff}{Empirical FDR. Default 0.1}
+
+\item{rttol}{rt tolerance between the rt in standard file and in the result.}
 }
 \value{
 list of TGs that pass through the FDR cutoff

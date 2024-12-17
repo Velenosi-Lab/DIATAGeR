@@ -16,7 +16,7 @@ ScoreLipids(
   run.code = "Sample",
   ms1.precursors = c(1),
   ms2.precursors = c(0, 1),
-  spectra.file.type = c("txt", "msp", "mgf"),
+  spectra.file.type = c("txt", "msp", "mgf", "mgf_mzmine"),
   max.tails =
     "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
   exact.tails = NULL,

@@ -10,7 +10,7 @@ SpectraImport(
   ion.mode,
   results.file.type = c("MSDIAL", "Generic", "Progenesis"),
   spectra.type = "centroid",
-  spectra.file.type = c("txt", "msp", "mgf"),
+  spectra.file.type = c("txt", "msp", "mgf", "mgf_mzmine"),
   ppmtol = 5,
   rttol = 2
 )
