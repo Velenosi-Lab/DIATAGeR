@@ -252,6 +252,7 @@ calcRevDotProduct <- function(Lipids){
     ref_intensity <- aggregate(ref_intensity["intensity"], by=ref_intensity["mz"], sum)
     
     samp_intensity <- samp_intensity[order(samp_intensity$mz),][!duplicated(samp_intensity$mz),]
+    
     if(nrow(samp_intensity)<2){
       ret <- c(ret, NA)
       next
@@ -370,7 +371,7 @@ getTails <-  function(Lipids){
  # Lipids = TAG
 
 ##### Retrieve spectra from every sample #####
-retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf","msp"), ppmtol, rttolMS1=12){
+retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf","msp","mgf_mzmine"), ppmtol, rttolMS1=12){
   parse_msp <- function(file_path) {
     gc()
     msp <- scan(file = file_path, what = "",
@@ -428,6 +429,28 @@ retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf
     
     return(spectra_file)
   }
+  parse_mgf_mzmine <- function(file_path) {
+    gc()
+    
+    mgf <- readLines(file_path,warn=FALSE)
+    # general indices
+    indices <- grep("Title: ", mgf)
+    
+    # rt
+    rt_temp <- as.numeric(sub(".*RT: ([0-9.]+) min.*", "\\1", mgf[indices]))
+    
+    #msms
+    start_indices <- indices + 1
+    last_ion <- length(mgf)-2
+    end_indices <- c(tail(indices, -1) - 7, last_ion)
+    fragments_temp <- sapply(seq_along(start_indices), function(i) {
+      paste(mgf[start_indices[i]:end_indices[i]], collapse = " ")
+    })
+    
+    
+    spectra_file <- data.frame(rt = rt_temp,msms=fragments_temp)
+    return(spectra_file)
+  }
   
   
   #We decrease the ppmtolMS1 because we want to narrow down the features we are matching.
@@ -456,95 +479,195 @@ retrieveSpectra <- function(Lipids, spectra.file, spectra.file.type=c("txt","mgf
     if (spectra.file.type=="txt"){
       sample <- read_delim(spectra.file[k],show_col_types = F) %>% as.data.frame()
     }   
+    if (spectra.file.type=="mgf_mzmine"){
+      sample <- parse_mgf_mzmine(spectra.file[k])
+      colnames(sample)[colnames(sample) == "rt"] <- "RT (min)"
+      colnames(sample)[colnames(sample) == "msms"] <- "MSMS spectrum"
+    }
+    
+    
     # #We load spectra samples one at a time because of file size.
     # sample <- read_delim(spectra.file[k],show_col_types = F) %>% as.data.frame()
-
-    for (j in 1:length(lipid_ID)){
+  if (spectra.file.type=="msp"|spectra.file.type=="mgf"|spectra.file.type=="txt"){
+  for (j in 1:length(lipid_ID)){
+    
+    #We loop through each unique species. 
+    species <- Lipids[Lipids$ID.simple==lipid_ID[j],]
+    setTxtProgressBar(pb, k+j/length(lipid_ID))
+    
+    if (species$FeatureType[1]=="Lipid"){
       
-      #We loop through each unique species. 
-      species <- Lipids[Lipids$ID.simple==lipid_ID[j],]
-      setTxtProgressBar(pb, k+j/length(lipid_ID))
+      #Filter by ppm and rt 
+      match <- sample[(between(sample$`Precursor m/z`, ppm(species$mz[1],"-",ppmtolMS1), ppm(species$mz[1],"+",ppmtolMS1)) & 
+                         between(sample$`RT (min)`,species$rt[1]-rttolMS1/60, species$rt[1]+rttolMS1/60)),]
       
-      if (species$FeatureType[1]=="Lipid"){
+      if (nrow(match)>1) {
+        rttolr <- rttolMS1
         
-        #Filter by ppm and rt 
-        match <- sample[(between(sample$`Precursor m/z`, ppm(species$mz[1],"-",ppmtolMS1), ppm(species$mz[1],"+",ppmtolMS1)) & 
-                            between(sample$`RT (min)`,species$rt[1]-rttolMS1/60, species$rt[1]+rttolMS1/60)),]
-  
-          if (nrow(match)>1) {
-            rttolr <- rttolMS1
+        #Keep reducing retention time tolerance until there are no matches (by 4 for speed).
+        repeat{
+          rttolr <- rttolr-4
+          matchtemp <- match[between(match$`RT (min)`,species$rt[1]-rttolr/60, species$rt[1]+rttolr/60),]
+          
+          if (rttolr<=4 | nrow(matchtemp)==1) {
+            match <- matchtemp
+            break
+          } else if (nrow(matchtemp)==0){
             
-            #Keep reducing retention time tolerance until there are no matches (by 4 for speed).
-            repeat{
-              rttolr <- rttolr-4
+            #Keep increasing retention time tolerance until there is one or more matches. 
+            repeat{ 
+              rttolr <- rttolr+1
               matchtemp <- match[between(match$`RT (min)`,species$rt[1]-rttolr/60, species$rt[1]+rttolr/60),]
               
-              if (rttolr<=4 | nrow(matchtemp)==1) {
+              if (nrow(matchtemp)>=1) {
                 match <- matchtemp
                 break
-              } else if (nrow(matchtemp)==0){
-                
-                #Keep increasing retention time tolerance until there is one or more matches. 
-                repeat{ 
-                  rttolr <- rttolr+1
-                  matchtemp <- match[between(match$`RT (min)`,species$rt[1]-rttolr/60, species$rt[1]+rttolr/60),]
-                 
-                  if (nrow(matchtemp)>=1) {
-                    match <- matchtemp
-                    break
-                  }
-                }
               }
-              break
+            }
+          }
+          break
+        }
+        
+        #Select larger area if there is still more than one match. 
+        if (nrow(match)>1) {match <- match[which.min(abs(species$mz[1]-match$`Precursor m/z`)),]}
+      }
+      
+      #Now we should have the MS/MS where the lipid was identified
+      if (nrow(match)==1) {
+        if(spectra.file.type=="txt"){
+          sample_msms <- splits(match$`MSMS spectrum`)
+        }
+        if((spectra.file.type=="msp") |(spectra.file.type=="mgf")){
+          sample_msms <- splits_msp_mgf(match$`MSMS spectrum`)
+        }
+        
+        #Looping through every lipid identified from that feature 
+        for (p in 1:nrow(species)){
+          
+          sample_ref <- species$MSMSref[[p]]
+          
+          temp <- data.frame()
+          
+          #Looping through fragments and precursor mz
+          for (l in 1:nrow(sample_ref)){
+            
+            #Subset before finding the closest one (for speed). 
+            between_msms <- sample_msms[between(sample_msms$mz, sample_ref$mzref[l]-1, sample_ref$mzref[l]+1),]
+            
+            #Prevents errors if the first row is empty
+            if(nrow(between_msms)==0){
+              fill_it <- data.frame(mz=NA, intensity=NA)
+              temp <- rbind(temp, fill_it)
+              next
             }
             
-            #Select larger area if there is still more than one match. 
-            if (nrow(match)>1) {match <- match[which.min(abs(species$mz[1]-match$`Precursor m/z`)),]}
+            #Select peak that is the closest to the reference.
+            mz_difference <- abs(sample_ref$mzref[l]-between_msms$mz)
+            smallest_col <- which.min(mz_difference)
+            temp <- rbind(temp,between_msms[smallest_col,])
           }
           
-          #Now we should have the MS/MS where the lipid was identified
-          if (nrow(match)==1) {
-            if(spectra.file.type=="txt"){
-              sample_msms <- splits(match$`MSMS spectrum`)
-              }
-            if((spectra.file.type=="msp") |(spectra.file.type=="mgf")){
-              sample_msms <- splits_msp_mgf(match$`MSMS spectrum`)
-            }
-              
-            #Looping through every lipid identified from that feature 
-            for (p in 1:nrow(species)){
-            
-              sample_ref <- species$MSMSref[[p]]
-              
-              temp <- data.frame()
-
-              #Looping through fragments and precursor mz
-              for (l in 1:nrow(sample_ref)){
-                
-                #Subset before finding the closest one (for speed). 
-                between_msms <- sample_msms[between(sample_msms$mz, sample_ref$mzref[l]-1, sample_ref$mzref[l]+1),]
-                
-                #Prevents errors if the first row is empty
-                if(nrow(between_msms)==0){
-                  fill_it <- data.frame(mz=NA, intensity=NA)
-                  temp <- rbind(temp, fill_it)
-                  next
-                }
-                
-                #Select peak that is the closest to the reference.
-                mz_difference <- abs(sample_ref$mzref[l]-between_msms$mz)
-                smallest_col <- which.min(mz_difference)
-                temp <- rbind(temp,between_msms[smallest_col,])
-              }
-              
-              #Set peak as NA if the closest peak is not within the ppm window
-              boolean <- map2_lgl(.x=temp$mz, .y=sample_ref$mzref, ~between(.x, ppm(.y,"-",ppmtol), ppm(.y,"+",ppmtol)))
-              removed_ppm_limit <- map2_dbl(.x=temp$intensity, .y=boolean, ~ifelse(.y, .x, NA))
-              Lipids[Lipids$ID.simple==lipid_ID[j],]$MSMSref[[p]][paste0("sample_",k)] <-  removed_ppm_limit
-            }
-          } 
+          #Set peak as NA if the closest peak is not within the ppm window
+          boolean <- map2_lgl(.x=temp$mz, .y=sample_ref$mzref, ~between(.x, ppm(.y,"-",ppmtol), ppm(.y,"+",ppmtol)))
+          removed_ppm_limit <- map2_dbl(.x=temp$intensity, .y=boolean, ~ifelse(.y, .x, NA))
+          Lipids[Lipids$ID.simple==lipid_ID[j],]$MSMSref[[p]][paste0("sample_",k)] <-  removed_ppm_limit
         }
+      } 
     }
+  }
+  
+}
+    
+  if (spectra.file.type=="mgf_mzmine"){
+
+    for (j in 1:length(lipid_ID)){
+    
+    #We loop through each unique species. 
+    species <- Lipids[Lipids$ID.simple==lipid_ID[j],]
+    setTxtProgressBar(pb, k+j/length(lipid_ID))
+    
+    if (species$FeatureType[1]=="Lipid"){
+      
+      #Filter by ppm and rt 
+      match <- sample[between(sample$`RT (min)`,species$rt[1]-rttolMS1/60, species$rt[1]+rttolMS1/60),]
+      
+      if (nrow(match)>1) {
+        rttolr <- rttolMS1
+        
+        #Keep reducing retention time tolerance until there are no matches (by 4 for speed).
+        repeat{
+          rttolr <- rttolr-4
+          matchtemp <- match[between(match$`RT (min)`,species$rt[1]-rttolr/60, species$rt[1]+rttolr/60),]
+          
+          if (rttolr<=4 | nrow(matchtemp)==1) {
+            match <- matchtemp
+            break
+          } else if (nrow(matchtemp)==0){
+            
+            #Keep increasing retention time tolerance until there is one or more matches. 
+            repeat{ 
+              rttolr <- rttolr+1
+              matchtemp <- match[between(match$`RT (min)`,species$rt[1]-rttolr/60, species$rt[1]+rttolr/60),]
+              
+              if (nrow(matchtemp)>=1) {
+                match <- matchtemp
+                break
+              }
+            }
+          }
+          break
+        }
+        
+        #Select larger area if there is still more than one match. 
+        if (nrow(match)>1) {match <- match[which.min(abs(species$rt[1]-match$`RT (min)`)),]}
+      }
+      
+      #Now we should have the MS/MS where the lipid was identified
+      if (nrow(match)==1) {
+        if(spectra.file.type=="txt"){
+          sample_msms <- splits(match$`MSMS spectrum`)
+        }
+        if((spectra.file.type=="msp") |(spectra.file.type=="mgf")|(spectra.file.type=="mgf_mzmine")){
+          sample_msms <- splits_msp_mgf(match$`MSMS spectrum`)
+        }
+        
+        #Looping through every lipid identified from that feature 
+        for (p in 1:nrow(species)){
+          
+          sample_ref <- species$MSMSref[[p]]
+          
+          temp <- data.frame()
+          
+          #Looping through fragments and precursor mz
+          for (l in 1:nrow(sample_ref)){
+            
+            #Subset before finding the closest one (for speed). 
+            between_msms <- sample_msms[between(sample_msms$mz, sample_ref$mzref[l]-1, sample_ref$mzref[l]+1),]
+            
+            #Prevents errors if the first row is empty
+            if(nrow(between_msms)==0){
+              fill_it <- data.frame(mz=NA, intensity=NA)
+              temp <- rbind(temp, fill_it)
+              next
+            }
+            
+            #Select peak that is the closest to the reference.
+            mz_difference <- abs(sample_ref$mzref[l]-between_msms$mz)
+            smallest_col <- which.min(mz_difference)
+            temp <- rbind(temp,between_msms[smallest_col,])
+          }
+          
+          #Set peak as NA if the closest peak is not within the ppm window
+          boolean <- map2_lgl(.x=temp$mz, .y=sample_ref$mzref, ~between(.x, ppm(.y,"-",ppmtol), ppm(.y,"+",ppmtol)))
+          removed_ppm_limit <- map2_dbl(.x=temp$intensity, .y=boolean, ~ifelse(.y, .x, NA))
+          Lipids[Lipids$ID.simple==lipid_ID[j],]$MSMSref[[p]][paste0("sample_",k)] <-  removed_ppm_limit
+        }
+      } 
+    }
+  }
+  
+  
+}
     gc()
     }
   invisible(Lipids)

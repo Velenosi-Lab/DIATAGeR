@@ -30,7 +30,7 @@ SpectraImport <-
            ion.mode,
            results.file.type = c("MSDIAL", "Generic","Progenesis"),
            spectra.type = "centroid",
-           spectra.file.type = c("txt","msp","mgf"),
+           spectra.file.type = c("txt","msp","mgf","mgf_mzmine"),
            ppmtol = 5,
            rttol=2) {
     
@@ -102,6 +102,28 @@ SpectraImport <-
       return(spectra_file)
     }
     
+    parse_mgf_mzmine <- function(file_path) {
+      gc()
+      
+      mgf <- readLines(file_path,warn=FALSE)
+      # general indices
+      indices <- grep("Title: ", mgf)
+      
+      # rt
+      rt_temp <- as.numeric(sub(".*RT: ([0-9.]+) min.*", "\\1", mgf[indices]))
+      
+      #msms
+      start_indices <- indices + 1
+      last_ion <- length(mgf)-2
+      end_indices <- c(tail(indices, -1) - 7, last_ion)
+      fragments_temp <- sapply(seq_along(start_indices), function(i) {
+        paste(mgf[start_indices[i]:end_indices[i]], collapse = " ")
+      })
+      
+      
+      spectra_file <- data.frame(rt = rt_temp,msms=fragments_temp)
+      return(spectra_file)
+    }
     
     if (length(spectra.type) > 1)
       stop("Spectratype must be centroid")
@@ -134,8 +156,14 @@ SpectraImport <-
 
       AllMatch <- featureDF
       AllMatch$fullmsms <- NA
-    
-      peakListFiles <-list.files(fileORfoldername,pattern = paste0(".", spectra.file.type),full.names = T)  
+      
+      if (spectra.file.type=="msp"|spectra.file.type=="mgf"|spectra.file.type=="txt"){
+        peakListFiles <-list.files(fileORfoldername,pattern = paste0(".", spectra.file.type),full.names = T)  
+      }
+      
+      if (spectra.file.type=="mgf_mzmine"){
+        peakListFiles <-list.files(fileORfoldername,pattern = paste0(".", "mgf"),full.names = T)  
+      }
       
       lst <- AllMatch %>% group_by(`Spectrum reference file name`) %>% group_map(~.x,.keep = T)
       names(lst) <- sapply(lst, function(x) x$`Spectrum reference file name`[[1]])
@@ -155,9 +183,13 @@ p=4
             select("RT (min)", "Precursor m/z", "MSMS spectrum") %>%
             setNames(c("rt", "mz", "msms"))
         }
+        if (spectra.file.type=="mgf_mzmine"){
+          spectra_file <- parse_mgf_mzmine(peakListFiles[grep(names(lst[p]), peakListFiles)])
+        }
         
         ## Get MSMS spectra based on 'mz' in alignment file
-        if (results.file.type == "Generic") {
+          ## Generic feature list with spectra exported from msdial 
+        if (results.file.type == "Generic" && (spectra.file.type == "txt" || spectra.file.type == "msp" || spectra.file.type== "mgf")) {
           k=1
           for (k in 1:nrow(sampl_num)){
             
@@ -218,7 +250,62 @@ p=4
         }
         }
         
+          ## Generic with spectra exported from mzmine 
+        if (results.file.type == "Generic" && spectra.file.type == "mgf_mzmine") {
+          k=1
+          for (k in 1:nrow(sampl_num)){
+            
+            setTxtProgressBar(pb, p+k/nrow(sampl_num))
+            
+            rttolMS1<-rttol
+            
+            match <- spectra_file[
+                (between(spectra_file$rt,
+                         sampl_num$rt[k] - rttolMS1 / 60,
+                         sampl_num$rt[k] + rttolMS1 / 60))
+              ,]
+            
+            if (nrow(match)==1) {
+              lst[[p]]$fullmsms[k] <- match$msms
+            }
+            
+            if (nrow(match)>1) {
+              lst[[p]]$fullmsms[k] <- match[which.min(abs(sampl_num$rt[k]-match$rt)),]$msms
+            }
+            
+            if (nrow(match)==0){
+              
+              rttolr<- rttolMS1
+              
+              repeat{
+                rttolr<-rttolr + 2
+                matchtemp <- spectra_file[
+                    (between(spectra_file$rt,
+                             sampl_num$rt[k] - rttolr / 60,
+                             sampl_num$rt[k] + rttolr / 60))
+                  ,]
+                
+                if (nrow(matchtemp)>=1 |rttolr > 100) {
+                  match <- matchtemp
+                  break
+                }
+              }
+              
+              if (nrow(match) > 1) {
+                lst[[p]]$fullmsms[k] <- match[which.min(abs(sampl_num$rt[k]-match$rt)),]$msms
+              } 
+              if (nrow(match) == 1) { 
+                lst[[p]]$fullmsms[k] <- match$msms
+              }
+              if (nrow(match)==0) {
+                lst[[p]]$fullmsms[k] <- NA
+              }
+              
+            }
+          }
+        }
         
+        ## MSDIAL feature list with spectra exported from mzmine 
         if (results.file.type == "MSDIAL") {
           k=1
           for (k in 1:nrow(sampl_num)){
@@ -252,7 +339,6 @@ p=4
             
           }
         }
-        
       }
 
       
@@ -315,7 +401,7 @@ p=4
         MSMS_Spectra <- lapply(split_list, splits) 
       }
       
-      if (spectra.file.type == "msp" |spectra.file.type=="mgf"){
+      if (spectra.file.type == "msp" |spectra.file.type=="mgf"|spectra.file.type=="mgf_mzmine"){
         MSMS_Spectra <- lapply(split_list, splits_msp_mgf) 
       }
       

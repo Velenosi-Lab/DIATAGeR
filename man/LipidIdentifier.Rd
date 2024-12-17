@@ -61,7 +61,7 @@ bonds for each fatty acyl chain length.
 Default = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3,
 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"}
 
-\item{exact.tails}{library can be customizable for specific tails}
+\item{exact.tails}{library can be customizable for specific tails. (Eg: exact_tails = c("18.1","18.2) creates library of TGs made up 18:1 and 18:2 fatty acids))}
 
 \item{print.spectra}{If TRUE, prints MS/MS spectra and mirrored reference peaks. Default FALSE.}
 

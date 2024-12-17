@@ -3,7 +3,8 @@
 #' @param identified.lipids List of combined TG annotations 
 #' @param cutoff Empirical FDR. Default 0.1
 #' @param standard.file list of standard TGs (Optional)
-#' @param iteration #Default 10
+#' @param iteration Default 10
+#' @param rttol rt tolerance between the rt in standard file and in the result. 
 #'
 #' @return list of TGs that pass through the FDR cutoff
 #' @export
@@ -19,7 +20,10 @@
 FDRCutoff<- function(identified.lipids, 
                      standard.file=NULL, 
                      iteration=3, 
-                     cutoff = 0.1) {
+                     cutoff = 0.1,
+                     rttol=10) {
+  
+  colnames(identified.lipids)<-c("ID.simple","Formula","Short.name","Name","rt","First_Precursor_mz","mz","MSMSref","FeatureType","Class","Rev.dot.product","Correlation.tan","Correlation.tan.within","Missing.fragments","FragIntensity","Score")
   
   FDRCutoff_file<- function(identified.lipids, cutoff = 0.1){
     
@@ -94,7 +98,7 @@ FDRCutoff<- function(identified.lipids,
     return(ret)
   }
   
-  
+  std_before_fdr<-c()
   std <- c()
   srt <- c()
   lng <- c()
@@ -103,8 +107,7 @@ FDRCutoff<- function(identified.lipids,
   FDRout<-c()
   p=1
   for (p in 1:iteration) {
-    identified.lipids <- getScoreNew(identified.lipids, standard.file= standard.file,
-                                     rt.type=c("truncated"), rttol=2)
+    identified.lipids <- getScoreNew(identified.lipids, standard.file= standard.file)
     
     identified.lipids.FDR <- FDRCutoff_file(identified.lipids = identified.lipids,
                                             cutoff = cutoff)
@@ -115,8 +118,10 @@ FDRCutoff<- function(identified.lipids,
     FDRout[[p]]<-identified.lipids.FDR
     
     if (!is.null(standard.file)) {
-      fdr <- c(fdr,standardsFDR(identified.lipids, standard.file= standard.file, rt.type=c("truncated"), rttol=2))
-      sds <- standardsCheck(identified.lipids.FDR, standard.file= standard.file, rt.type=c("truncated"), rttol=2)
+      sds_before_fdr <- standardsCheck(identified.lipids, standard.file= standard.file, rt.type=c("truncated"), rttol=rttol)
+      std_before_fdr<- c(std_before_fdr, nrow(sds_before_fdr))
+      fdr <- c(fdr,standardsFDR(identified.lipids, standard.file= standard.file, rt.type=c("truncated"), rttol=rttol))
+      sds <- standardsCheck(identified.lipids.FDR, standard.file= standard.file, rt.type=c("truncated"), rttol=rttol)
       std <- c(std, nrow(sds))
     }
   }
@@ -131,8 +136,9 @@ FDRCutoff<- function(identified.lipids,
     standard.file<-read.csv(standard.file)
     cat("\n")
     cat("For standard lipids:","\n")
+    cat("Number of standards found in the results before FDR: ",mean(std_before_fdr),"/",nrow(standard.file), "\n")
     cat("Number of standards found after FDR cutoff: ",mean(std),"/",nrow(standard.file), "\n")
-    cat("The FDR required to find all standards: ",round(mean(fdr), 4),"\n")
+    cat("The FDR required to find all available standards: ",round(mean(fdr), 4),"\n")
   }
   else{
     cat("Standard file was not provided. FDR required to find all standards and number of standards 
@@ -143,6 +149,8 @@ FDRCutoff<- function(identified.lipids,
   
   FDRout_1<-FDRout[[which.max(lng)]]
   
+  colnames(FDRout_1)<-c("Feature.ID","Formula","Species","Molecular.species","Retention.time","Precursor.mz.ref","Precursor.mz","MSMSref",
+                             "FeatureType","Class","Rev.dot.product","Corr.precusor.fragments","Corr.fragments.fragments","Missing.fragments","FragIntensity","Score")
   return(FDRout_1)
   
 }
