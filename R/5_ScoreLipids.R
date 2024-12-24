@@ -29,7 +29,8 @@ getScoreNew <- function(TAGsAll, standard.file= NULL, rt.type=c("truncated", "ex
   train_model <- trainControl(method = "cv", number = 5, 
                               summaryFunction = twoClassSummary, classProbs = TRUE,
                               savePredictions = "all")
-  model1 <- train(
+  model1 <- suppressWarnings({
+    train(
     Class ~   Rev.dot.product + sqrt(Missing.fragments)  + log10(FragIntensity) + Correlation.tan.within+ Correlation.tan,
 # rev_dot_product + sqrt(Missing.fragments) + Correlation.tan + log10(FragIntensity),
     data = TAGTRAIN,
@@ -37,6 +38,7 @@ getScoreNew <- function(TAGsAll, standard.file= NULL, rt.type=c("truncated", "ex
     family = "binomial",
     trControl = train_model
   )
+  })
 
   # Predict scores for all lipids.
   Score_1 <- predict(model1, newdata = TAGsAll, type = "prob")$Tp
