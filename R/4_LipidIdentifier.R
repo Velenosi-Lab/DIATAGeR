@@ -137,7 +137,7 @@ plot_spectra_limitrange <- function(){
 #' Useful when there are three possible fragments in the reference and only two are 
 #' required for a positive match. Default 'any'.
 #' @param version Appends this character to the output file name. 
-#' @param print.spectra If TRUE, prints MS/MS spectra and mirrored reference peaks. Default FALSE. 
+#' @param print.MS2spectra If TRUE, prints MS/MS spectra and mirrored reference peaks. Default FALSE. 
 #' @param write.annotations If TRUE, writes RDS file of identified lipids. Default TRUE. 
 #' @param ms1.precursors Number of precursors found in MS1 to identify compounds. Default to 1 
 #' @param ms2.precursors Number of precursor found in MS2 to identify compounds. 
@@ -166,7 +166,7 @@ plot_spectra_limitrange <- function(){
 #' 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
 #' exact.tails=NULL,
 #' which.frag = "any", 
-#' print.spectra = F,
+#' print.MS2spectra = F,
 #' write.annotations = T)
 #' }
 
@@ -178,7 +178,7 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
                             ms2.precursors = c(0,1), version,
                             max.tails= "8.2, 9.0, 10.2, 11.0, 12.3, 13.1,14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
                             exact.tails = NULL,
-                            print.spectra = FALSE, write.annotations=TRUE){
+                            print.MS2spectra = FALSE, write.annotations=TRUE){
 
   ## Calculates mz difference from PPM for MS1
   ppmMS1 <- function(mz, mode, ppmtolMS1){
@@ -523,7 +523,7 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
           
               
               
-              if ( print.spectra == TRUE){
+              if ( print.MS2spectra == TRUE){
                 graphdir <- paste0(ion.mode,"/",lipid,"_",version)
                 dir.create(ion.mode, showWarnings = F)
                 dir.create(graphdir, showWarnings = F) 
@@ -566,7 +566,7 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
 
 # LipidIdentifierWrapper<-function(DIADataObj, cores=1, ion.mode, format = c("MSDIAL","Progenesis"), IDParam=NULL,ppmtol=15, rttol=5,
 #                                  rt.range = c(0,Inf), intensity.window = c(5,300), version,
-#                                  print.spectra = TRUE, write.annotations=TRUE,...){
+#                                  print.MS2spectra = TRUE, write.annotations=TRUE,...){
 # 
 #   IDFiles <- list.files("inst/extdata/")
 #   IDFilesNames<-IDFiles[grep(ion.mode,IDFiles)]
@@ -584,7 +584,7 @@ LipidIdentifier <- function(DIADataObj, lipid, ion.mode,
 #     setTxtProgressBar(pb2,i)
 #     suppressMessages(
 # 
-#       DIADataObj<-LipidIdentifier(DIADataObj, Lipid=IDFilesNames[i], format = format,ion.mode=ion.mode, ppmtol=ppmtol, rttol=rttol,rt.range = rt.range, intensity.window = intensity.window, version=version, print.spectra = print.spectra,
+#       DIADataObj<-LipidIdentifier(DIADataObj, Lipid=IDFilesNames[i], format = format,ion.mode=ion.mode, ppmtol=ppmtol, rttol=rttol,rt.range = rt.range, intensity.window = intensity.window, version=version, print.MS2spectra = print.MS2spectra,
 #                                   write.annotations=write.annotations)
 #     )
 #     print(paste0("Identify ",IDFilesNames[i]," Complete"))

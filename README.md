@@ -124,7 +124,7 @@ max.tails # list of desired number of carbons and the maximum number of double
 # 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0"
 exact.tails # library can be customizable for specific tails. Default NULL.
 Eg: exact_tails = c("18.1","18.2) creates library of TGs made up 18:1 and 18:2 fatty acids)
-print.spectra = c(TRUE,FALSE) # If TRUE, prints MS/MS spectra and mirrored 
+print.MS2spectra = c(TRUE,FALSE) # If TRUE, prints MS/MS spectra and mirrored 
 # reference peaks. Default FALSE. 
 write.annotations = c(TRUE, FALSE) # If TRUE, the function automatically writes 
 # RDS file of identified lipids. Default TRUE. 
@@ -142,7 +142,7 @@ LipidIdentifier(DIADataObj = DIA_Pos,
                 max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
                 exact.tails = NULL,
                 which.frag = "any", 
-                print.spectra = F,
+                print.MS2spectra = F,
                 write.annotations = T)
 ```
 
