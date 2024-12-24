@@ -481,7 +481,7 @@ spectra</h3>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co"># 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0&quot;</span></span>
 <span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>exact.tails <span class="co"># library can be customizable for specific tails. Default NULL. </span></span>
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#Eg: exact_tails = c(&quot;18.1&quot;,&quot;18.2) creates library of TGs made up by 18:1 and 18:2 fatty acids</span></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>print.spectra <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>,<span class="cn">FALSE</span>) <span class="co"># If TRUE, prints MS/MS spectra and mirrored </span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>print.MS2spectra <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>,<span class="cn">FALSE</span>) <span class="co"># If TRUE, prints MS/MS spectra and mirrored </span></span>
 <span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co"># reference peaks. Default FALSE. </span></span>
 <span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>write.annotations <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="co"># If TRUE, the function automatically writes </span></span>
 <span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co"># RDS file of identified lipids. Default TRUE. </span></span>
@@ -499,7 +499,7 @@ spectra</h3>
 <span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a>                <span class="at">max.tails =</span> <span class="st">&quot;8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0&quot;</span>,</span>
 <span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a>                <span class="at">exact.tails =</span> <span class="cn">NULL</span>,</span>
 <span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a>                <span class="at">which.frag =</span> <span class="st">&quot;any&quot;</span>, </span>
-<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a>                <span class="at">print.spectra =</span> F,</span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a>                <span class="at">print.MS2spectra =</span> F,</span>
 <span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a>                <span class="at">write.annotations =</span> T)</span></code></pre></div>
 <p>A folder named according to ion.mode (Pos/Neg) will be created in the
 working directory and contain the result file (Eg:
