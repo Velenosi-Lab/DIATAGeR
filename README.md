@@ -11,7 +11,7 @@ Triacylglycerols (TGs) are the most abundant lipids in the human body and the pr
 </p>
 
 # Required Data 
-DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list can be an MS-DIAL alignment file or generic format [[feature list example]](https://shorturl.at/COesX). MS2 spectra can be in txt, msp and mgf format (exported from MSDIAL) or mgf format (exported from MZMine). 
+DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list (txt format) can be an MS-DIAL alignment file or generic format . MS2 spectra can be in txt, msp and mgf format (exported from MSDIAL). In addition, DIATAGeR can read MS2 spectra in mgf format (exported from MZMine). Example of Feature lists and MS2 spectra are available in [[MetaboLights]](www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
 
 # Installation
 
@@ -36,6 +36,8 @@ setwd("Working directory folder")
 ## Lipid identification
 
 DIATAGeR includes 6 functions: measureFileImport, SpectraImport, RemoveIsotopes, LipidIdentifier, ScoreLipids and FDRCutoff. For further details, please use `help('name of the function', package = "DIATAGeR")`
+
+In the example below, Feature_List_Liver_MSDIAL.txt and Spectra_txt_Liver_MSDIAL folder with MS2 spectra in txt format can be downloaded from [[MetaboLights]](www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
 
 ### Step 1: measureFileImport Function: Feature list Import
 
@@ -67,12 +69,11 @@ ion.mode <- c("Pos","Neg")
 results.file.type = c("MSDIAL", "Generic")
 spectra.file.type =c("txt","msp","mgf","mgf_mzmine")
 rttol #retention time tolerance in seconds. Default to 2
-ppmtol # ppm tolerance. Default to 5. This parameter is for generic feature list
 
 
 # Example
 DIA_Pos <- SpectraImport(DIADataObj = DIA_Pos,
-                         fileORfoldername =  "Data/Spectra_txt_Liver_MSDIAL",
+                         fileORfoldername = "Spectra_txt_Liver_MSDIAL/Centroid",
                          ion.mode = "Pos", 
                          spectra.file.type ="txt",
                          results.file.type = "MSDIAL",
@@ -181,7 +182,7 @@ ResultsTG<- ScoreLipids(DIADataObj = DIA_Pos,
                         spectra.file.type ="txt",
                         max.tails = "8.2, 9.0, 10.2, 11.0, 12.3, 13.1, 14.3, 15.3, 16.5, 17.3, 18.5, 19.5, 20.6, 21.5, 22.6, 23.0, 24.4, 25.0, 26.0",
                         exact.tails=NULL,
-                        spectra.file = "Data/Spectra_txt_Liver_MSDIAL")
+                        spectra.file =  "Spectra_txt_Liver_MSDIAL/Centroid")
 
 saveRDS(ResultsTG, file = "ResultsTG.RDS")
 
@@ -190,7 +191,8 @@ saveRDS(ResultsTG, file = "ResultsTG.RDS")
 
 ### Step 6: FDRCutoff function: Generating a list of TGs passed through a pre-determined FDR 
 
-The average number of species, molecular species and AUC values after multiple iterations are reported. The function outputs the file containing the highest number of molecular species. If a list of standard TGs is provided, the number of standards found and FDR required to find all standards are reported.
+The average number of species, molecular species and AUC values after multiple iterations are reported. The function outputs the file containing the highest number of molecular species. If a list of standard TGs is provided, the number of standards found and FDR required to find all standards are reported. Standards_File_Format_example.csv file can be found in [[MetaboLights]](www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
+
 
 ```R
 # Set the processing parameters

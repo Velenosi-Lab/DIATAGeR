@@ -189,69 +189,69 @@ p=4
         
         ## Get MSMS spectra based on 'mz' in alignment file
           ## Generic feature list with spectra exported from msdial 
-        if (results.file.type == "Generic" && (spectra.file.type == "txt" || spectra.file.type == "msp" || spectra.file.type== "mgf")) {
-          k=1
-          for (k in 1:nrow(sampl_num)){
-            
-            setTxtProgressBar(pb, p+k/nrow(sampl_num))
-            
-            ppmtolMS1<-ppmtol
-            rttolMS1<-rttol
-            
-            match <- spectra_file[
-              (between(spectra_file$mz,
-                       ppm(sampl_num$mz[k], "-", ppmtolMS1),
-                       ppm(sampl_num$mz[k], "+", ppmtolMS1))) &
-                (between(spectra_file$rt,
-                         sampl_num$rt[k] - rttolMS1 / 60,
-                         sampl_num$rt[k] + rttolMS1 / 60))
-              ,]
-            
-            if (nrow(match)==1) {
-              lst[[p]]$fullmsms[k] <- match$msms
-            }
-            
-            if (nrow(match)>1) {
-              lst[[p]]$fullmsms[k] <- match[which.min(abs(sampl_num$mz[k]-match$mz)),]$msms
-            }
-            
-            if (nrow(match)==0){
-              
-              ppmtolr<- ppmtolMS1
-              
-              repeat{
-                ppmtolr<-ppmtolr + 15
-                matchtemp <- spectra_file[
-                  (between(spectra_file$mz,
-                           ppm(sampl_num$mz[k], "-", ppmtolr),
-                           ppm(sampl_num$mz[k], "+", ppmtolr))) &
-                    (between(spectra_file$rt,
-                             sampl_num$rt[k] - rttolMS1 / 60,
-                             sampl_num$rt[k] + rttolMS1 / 60))
-                  ,]
-                
-                if (nrow(matchtemp)>=1 |ppmtolr > 1000) {
-                  match <- matchtemp
-                  break
-                }
-              }
-                
-                if (nrow(match) > 1) {
-                  lst[[p]]$fullmsms[k] <- match[which.min(abs(sampl_num$mz[k] - match$mz)),]$msms
-                } 
-                if (nrow(match) == 1) { 
-                  lst[[p]]$fullmsms[k] <- match$msms
-                }
-                if (nrow(match)==0) {
-                  lst[[p]]$fullmsms[k] <- NA
-                }
-            
-          }
-        }
-        }
+        # if (results.file.type == "Generic" && (spectra.file.type == "txt" || spectra.file.type == "msp" || spectra.file.type== "mgf")) {
+        #   k=1
+        #   for (k in 1:nrow(sampl_num)){
+        #     
+        #     setTxtProgressBar(pb, p+k/nrow(sampl_num))
+        #     
+        #     ppmtolMS1<-ppmtol
+        #     rttolMS1<-rttol
+        #     
+        #     match <- spectra_file[
+        #       (between(spectra_file$mz,
+        #                ppm(sampl_num$mz[k], "-", ppmtolMS1),
+        #                ppm(sampl_num$mz[k], "+", ppmtolMS1))) &
+        #         (between(spectra_file$rt,
+        #                  sampl_num$rt[k] - rttolMS1 / 60,
+        #                  sampl_num$rt[k] + rttolMS1 / 60))
+        #       ,]
+        #     
+        #     if (nrow(match)==1) {
+        #       lst[[p]]$fullmsms[k] <- match$msms
+        #     }
+        #     
+        #     if (nrow(match)>1) {
+        #       lst[[p]]$fullmsms[k] <- match[which.min(abs(sampl_num$mz[k]-match$mz)),]$msms
+        #     }
+        #     
+        #     if (nrow(match)==0){
+        #       
+        #       ppmtolr<- ppmtolMS1
+        #       
+        #       repeat{
+        #         ppmtolr<-ppmtolr + 15
+        #         matchtemp <- spectra_file[
+        #           (between(spectra_file$mz,
+        #                    ppm(sampl_num$mz[k], "-", ppmtolr),
+        #                    ppm(sampl_num$mz[k], "+", ppmtolr))) &
+        #             (between(spectra_file$rt,
+        #                      sampl_num$rt[k] - rttolMS1 / 60,
+        #                      sampl_num$rt[k] + rttolMS1 / 60))
+        #           ,]
+        #         
+        #         if (nrow(matchtemp)>=1 |ppmtolr > 1000) {
+        #           match <- matchtemp
+        #           break
+        #         }
+        #       }
+        #         
+        #         if (nrow(match) > 1) {
+        #           lst[[p]]$fullmsms[k] <- match[which.min(abs(sampl_num$mz[k] - match$mz)),]$msms
+        #         } 
+        #         if (nrow(match) == 1) { 
+        #           lst[[p]]$fullmsms[k] <- match$msms
+        #         }
+        #         if (nrow(match)==0) {
+        #           lst[[p]]$fullmsms[k] <- NA
+        #         }
+        #     
+        #   }
+        # }
+        # }
         
           ## Generic with spectra exported from mzmine 
-        if (results.file.type == "Generic" && spectra.file.type == "mgf_mzmine") {
+        if (results.file.type == "Generic" && (spectra.file.type == "txt" || spectra.file.type == "msp" || spectra.file.type== "mgf" ||  spectra.file.type == "mgf_mzmine")) {
           k=1
           for (k in 1:nrow(sampl_num)){
             
