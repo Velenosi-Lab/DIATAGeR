@@ -29,7 +29,7 @@ Triacylglycerols (TGs) are the most abundant lipids in the human body and the pr
 # Required Data 
 DIATAGeR requires two data inputs: a feature list and MS2 spectra. Feature list (txt format) can be an MS-DIAL alignment file or generic format . MS2 spectra can be in txt, msp and mgf format (exported from MSDIAL). In addition, DIATAGeR can accept data exported from MZMine: feature list (needs to be formatted to match the generic format) and MS2 spectra in mgf format.
 
-Example of Feature lists and MS2 spectra are available in [[MetaboLights]](www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
+Example of Feature lists and MS2 spectra are available in [[MetaboLights]](https://www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
 
 # Installation
 
