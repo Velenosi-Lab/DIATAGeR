@@ -210,7 +210,7 @@ saveRDS(ResultsTG, file = "ResultsTG.RDS")
 
 ### Step 6: FDRCutoff function: Generating a list of TGs passed through a pre-determined FDR 
 
-The average number of species, molecular species and AUC values after multiple iterations are reported. The function outputs the file containing the highest number of molecular species. If a list of standard TGs is provided, the number of standards found and FDR required to find all standards are reported. Standards_File_Format_example.csv file can be found in [[MetaboLights]](www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
+The average number of species, molecular species and AUC values after multiple iterations are reported. The function outputs the file containing the highest number of molecular species. If a list of standard TGs is provided, the number of standards found and FDR required to find all standards are reported. Standards_File_Format_example.csv file can be found in [[MetaboLights]](https://www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
 
 ```{r}
 # Set the processing parameters
