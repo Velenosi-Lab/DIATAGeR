@@ -56,7 +56,7 @@ setwd("Working directory folder")
 
 DIATAGeR includes 6 functions: measureFileImport, SpectraImport, RemoveIsotopes, LipidIdentifier, ScoreLipids and FDRCutoff. For further details, please use `help('name of the function', package = "DIATAGeR")`
 
-In the example below, Feature_List_Liver_MSDIAL.txt and Spectra_txt_Liver_MSDIAL folder with MS2 spectra in txt format can be downloaded from [[MetaboLights]](www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
+In the example below, Feature_List_Liver_MSDIAL.txt and Spectra_txt_Liver_MSDIAL folder with MS2 spectra in txt format can be downloaded from [[MetaboLights]](https://www.ebi.ac.uk/metabolights/MTBLS11927) or [[Google Drive]](https://shorturl.at/COesX)
 
 ### Step 1: measureFileImport Function: Feature list Import
 
